@@ -50,3 +50,7 @@ This endpoint retrieves all posts.
   ```
 
 This endpoint updates a post with the specified ID, providing a new title and description in the payload.
+
+### Note: This branch is not optimized with caching
+
+Please note that the code in this branch does not include caching optimizations. This is provided as a the base example before implementing the cache.
