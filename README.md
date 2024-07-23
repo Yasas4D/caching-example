@@ -27,3 +27,26 @@ npm run dev
 ```
 
 This will start the Node.js application and you can access it at `http://localhost:5001`.
+
+## API Endpoints
+
+### Get all posts
+
+- Method: GET
+- URL: `http://localhost:5001/api/v1/posts`
+
+This endpoint retrieves all posts.
+
+### Update post by id
+
+- Method: PUT
+- URL: `http://localhost:5001/api/v1/posts/:id`
+- Payload:
+  ```json
+  {
+    "title": "Test title2",
+    "description": "Test"
+  }
+  ```
+
+This endpoint updates a post with the specified ID, providing a new title and description in the payload.
