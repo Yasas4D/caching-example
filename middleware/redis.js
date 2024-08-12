@@ -11,36 +11,34 @@ const generateCacheKey = (req) => {
 };
 
 export const cacheLayer = async (req, res, next) => {
-  //early return dala lassana karmu -- UB ayyas video
   const redisClient = getRedisConnection();
 
-  if (redisClient?.status == "ready") {
-    const key = generateCacheKey(req, req.method);
+  if (!redisClient?.status == "ready") {
+    next();
+  }
 
-    //if cached data is found retrieve it
-    const cachedValue = await redisClient.get(key);
+  const key = generateCacheKey(req, req.method);
 
-    if (cachedValue) {
-      return res.json(JSON.parse(cachedValue));
-    } else {
-      const oldSend = res.send;
+  //if cached data is found retrieve it
+  const cachedValue = await redisClient.get(key);
 
-      // When the middleware function  is executed, it replaces the res.send function with a custom function.
-      res.send = async function saveCache(data) {
-        res.send = oldSend;
-
-        // cache the response only if it is successful
-        if (res.statusCode >= 200 && res.statusCode < 300) {
-          await redisClient.set(key, data);
-        }
-
-        return res.send(data);
-      };
-
-      // continue to the controller function
-      next();
-    }
+  if (cachedValue) {
+    return res.json(JSON.parse(cachedValue));
   } else {
+    const oldSend = res.send;
+
+    // When the middleware function  is executed, it replaces the res.send function with a custom function.
+    res.send = async function saveCache(data) {
+      res.send = oldSend;
+
+      // cache the response only if it is successful
+      if (res.statusCode >= 200 && res.statusCode < 300) {
+        await redisClient.set(key, data);
+      }
+
+      return res.send(data);
+    };
+
     next();
   }
 };
